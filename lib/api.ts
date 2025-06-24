@@ -91,3 +91,133 @@ async function apiRequest<T>(
         }
     }
 }
+
+// TMDB API functions
+export async function getTrending(params: TrendingParams): Promise<APIResponse<TMDBResponse<MediaItem>>> {
+    const { tmdb } = validateApiKeys()
+    if (!tmdb) {
+        return {
+            error: { message: "TMDB API key is not configured" },
+            success: false,
+        }
+    }
+
+    const url = `${API_CONFIG.tmdbBaseUrl}/trending/${params.mediaType}/${params.timeWindow}?api_key=${process.env.TMDB_API_KEY}`
+    return apiRequest<TMDBResponse<MediaItem>>(url)
+}
+
+export async function searchMulti(params: SearchParams): Promise<APIResponse<TMDBResponse<MediaItem>>> {
+    const { tmdb } = validateApiKeys()
+    if (!tmdb) {
+        return {
+            error: { message: "TMDB API key is not configured" },
+            success: false,
+        }
+    }
+
+    const searchParams = new URLSearchParams({
+        api_key: process.env.TMDB_API_KEY!,
+        query: params.query,
+        page: params.page.toString(),
+        include_adult: "false",
+    })
+
+    // Add filters
+    if (params.filters.year && params.filters.year !== "all") {
+        searchParams.append("year", params.filters.year)
+    }
+
+    const url = `${API_CONFIG.tmdbBaseUrl}/search/multi?${searchParams.toString()}`
+    return apiRequest<TMDBResponse<MediaItem>>(url)
+}
+
+export async function getMovieDetails(id: number): Promise<APIResponse<MovieDetails>> {
+    const { tmdb } = validateApiKeys()
+    if (!tmdb) {
+        return {
+            error: { message: "TMDB API key is not configured" },
+            success: false,
+        }
+    }
+
+    const url = `${API_CONFIG.tmdbBaseUrl}/movie/${id}?api_key=${process.env.TMDB_API_KEY}&append_to_response=credits,videos,similar,recommendations,external_ids`
+    return apiRequest<MovieDetails>(url)
+}
+
+export async function getTVShowDetails(id: number): Promise<APIResponse<TVShowDetails>> {
+    const { tmdb } = validateApiKeys()
+    if (!tmdb) {
+        return {
+            error: { message: "TMDB API key is not configured" },
+            success: false,
+        }
+    }
+
+    const url = `${API_CONFIG.tmdbBaseUrl}/tv/${id}?api_key=${process.env.TMDB_API_KEY}&append_to_response=credits,videos,similar,recommendations,external_ids`
+    return apiRequest<TVShowDetails>(url)
+}
+
+export async function discoverMovies(params: DiscoverParams): Promise<APIResponse<TMDBResponse<Movie>>> {
+    const { tmdb } = validateApiKeys()
+    if (!tmdb) {
+        return {
+            error: { message: "TMDB API key is not configured" },
+            success: false,
+        }
+    }
+
+    const searchParams = new URLSearchParams({
+        api_key: process.env.TMDB_API_KEY!,
+        page: (params.page || 1).toString(),
+        include_adult: "false",
+    })
+
+    if (params.sortBy) searchParams.append("sort_by", params.sortBy)
+    if (params.year) searchParams.append("year", params.year.toString())
+    if (params.genreIds?.length) searchParams.append("with_genres", params.genreIds.join(","))
+    if (params.minVoteAverage) searchParams.append("vote_average.gte", params.minVoteAverage.toString())
+    if (params.minVoteCount) searchParams.append("vote_count.gte", params.minVoteCount.toString())
+    if (params.language) searchParams.append("language", params.language)
+
+    const url = `${API_CONFIG.tmdbBaseUrl}/discover/movie?${searchParams.toString()}`
+    return apiRequest<TMDBResponse<Movie>>(url)
+}
+
+export async function discoverTVShows(params: DiscoverParams): Promise<APIResponse<TMDBResponse<TVShow>>> {
+    const { tmdb } = validateApiKeys()
+    if (!tmdb) {
+        return {
+            error: { message: "TMDB API key is not configured" },
+            success: false,
+        }
+    }
+
+    const searchParams = new URLSearchParams({
+        api_key: process.env.TMDB_API_KEY!,
+        page: (params.page || 1).toString(),
+        include_adult: "false",
+    })
+
+    if (params.sortBy) searchParams.append("sort_by", params.sortBy)
+    if (params.year) searchParams.append("first_air_date_year", params.year.toString())
+    if (params.genreIds?.length) searchParams.append("with_genres", params.genreIds.join(","))
+    if (params.minVoteAverage) searchParams.append("vote_average.gte", params.minVoteAverage.toString())
+    if (params.minVoteCount) searchParams.append("vote_count.gte", params.minVoteCount.toString())
+    if (params.language) searchParams.append("language", params.language)
+
+    const url = `${API_CONFIG.tmdbBaseUrl}/discover/tv?${searchParams.toString()}`
+    return apiRequest<TMDBResponse<TVShow>>(url)
+}
+
+export async function getGenres(mediaType: "movie" | "tv"): Promise<APIResponse<{ genres: Genre[] }>> {
+    const { tmdb } = validateApiKeys()
+    if (!tmdb) {
+        return {
+            error: { message: "TMDB API key is not configured" },
+            success: false,
+        }
+    }
+
+    const url = `${API_CONFIG.tmdbBaseUrl}/genre/${mediaType}/list?api_key=${process.env.TMDB_API_KEY}`
+    return apiRequest<{ genres: Genre[] }>(url)
+}
