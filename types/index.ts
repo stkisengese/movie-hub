@@ -280,3 +280,76 @@ export interface SearchFilters {
   sortBy: "popularity" | "vote_average" | "release_date" | "title"
   sortOrder: "asc" | "desc"
 }
+
+export interface SearchParams {
+  query: string
+  page: number
+  filters: SearchFilters
+}
+
+// Watchlist types
+export interface WatchlistItem {
+  id: number
+  type: "movie" | "tv"
+  title: string
+  poster_path: string | null
+  vote_average: number
+  release_date: string
+  watched: boolean
+  addedAt: string
+  watchedAt?: string
+  rating?: number
+  notes?: string
+}
+
+export interface WatchlistStats {
+  total: number
+  movies: number
+  tvShows: number
+  watched: number
+  unwatched: number
+  averageRating: number
+}
+
+// Error handling types
+export interface APIError {
+  message: string
+  status?: number
+  code?: string
+  details?: unknown
+}
+
+export interface APIResponse<T> {
+  data?: T
+  error?: APIError
+  success: boolean
+}
+
+// Configuration types
+export interface APIConfig {
+  tmdbApiKey: string
+  omdbApiKey: string
+  tmdbBaseUrl: string
+  omdbBaseUrl: string
+  imageBaseUrl: string
+  timeout: number
+  retryAttempts: number
+}
+
+// Trending types
+export interface TrendingParams {
+  mediaType: "all" | "movie" | "tv" | "person"
+  timeWindow: "day" | "week"
+}
+
+// Discover types
+export interface DiscoverParams {
+  mediaType: "movie" | "tv"
+  page?: number
+  sortBy?: string
+  year?: number
+  genreIds?: number[]
+  minVoteAverage?: number
+  minVoteCount?: number
+  language?: string
+}
