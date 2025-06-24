@@ -221,3 +221,35 @@ export async function getGenres(mediaType: "movie" | "tv"): Promise<APIResponse<
     const url = `${API_CONFIG.tmdbBaseUrl}/genre/${mediaType}/list?api_key=${process.env.TMDB_API_KEY}`
     return apiRequest<{ genres: Genre[] }>(url)
 }
+
+// OMDB API functions
+export async function getOMDBDetails(imdbId: string): Promise<APIResponse<OMDBMovie>> {
+    const { omdb } = validateApiKeys()
+    if (!omdb) {
+        return {
+            error: { message: "OMDB API key is not configured" },
+            success: false,
+        }
+    }
+
+    const url = `${API_CONFIG.omdbBaseUrl}/?apikey=${process.env.OMDB_API_KEY}&i=${imdbId}&plot=full`
+    return apiRequest<OMDBMovie>(url)
+}
+
+// Image URL helpers
+export function getImageUrl(
+    path: string | null,
+    size: "w92" | "w154" | "w185" | "w342" | "w500" | "w780" | "original" = "w500",
+): string {
+    if (!path) {
+        return "/placeholder.svg?height=750&width=500"
+    }
+    return `${API_CONFIG.imageBaseUrl}/${size}${path}`
+}
+
+export function getBackdropUrl(path: string | null, size: "w300" | "w780" | "w1280" | "original" = "w1280"): string {
+    if (!path) {
+        return "/placeholder.svg?height=720&width=1280"
+    }
+    return `${API_CONFIG.imageBaseUrl}/${size}${path}`
+}
