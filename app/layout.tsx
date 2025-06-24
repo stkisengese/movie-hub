@@ -1,15 +1,32 @@
-import type React from "react";
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+import type React from "react"
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import { ThemeProvider } from "@/components/theme-provider"
+import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
+import { ErrorBoundary } from "@/components/error-boundary"
+import "./globals.css"
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "MovieFlix - Discover Movies & TV Shows",
+  title: {
+    default: "MovieFlix - Discover Movies & TV Shows",
+    template: "%s | MovieFlix",
+  },
   description:
     "Discover trending movies and TV shows, create your personal watchlist, and explore detailed information about your favorite entertainment.",
-  keywords: ["movies", "tv shows", "entertainment", "watchlist", "trending"],
+  keywords: [
+    "movies",
+    "tv shows",
+    "entertainment",
+    "watchlist",
+    "trending",
+    "cinema",
+    "streaming",
+    "reviews",
+    "ratings",
+  ],
   authors: [{ name: "MovieFlix Team" }],
   creator: "MovieFlix",
   publisher: "MovieFlix",
@@ -27,6 +44,14 @@ export const metadata: Metadata = {
     siteName: "MovieFlix",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "MovieFlix - Discover Movies & TV Shows",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -34,6 +59,7 @@ export const metadata: Metadata = {
     description:
       "Discover trending movies and TV shows, create your personal watchlist, and explore detailed information about your favorite entertainment.",
     creator: "@movieflix",
+    images: ["/og-image.jpg"],
   },
   robots: {
     index: true,
@@ -46,6 +72,9 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  verification: {
+    google: "your-google-verification-code",
+  },
 }
 
 export default function RootLayout({
@@ -56,7 +85,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <div className="min-h-screen bg-background text-foreground">{children}</div>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <ErrorBoundary>
+            <div className="min-h-screen bg-background text-foreground flex flex-col">
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+          </ErrorBoundary>
+        </ThemeProvider>
       </body>
     </html>
   )
