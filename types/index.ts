@@ -82,6 +82,142 @@ export interface MediaItem {
   origin_country?: string[] // for TV shows
 }
 
+// Detailed movie/TV show types with additional information
+export interface MovieDetails extends Movie {
+  genres: Genre[]
+  credits: Credits
+  videos: VideoResponse
+  similar: TMDBResponse<Movie>
+  recommendations: TMDBResponse<Movie>
+  external_ids: ExternalIds
+}
+
+export interface TVShowDetails extends TVShow {
+  genres: Genre[]
+  credits: Credits
+  videos: VideoResponse
+  similar: TMDBResponse<TVShow>
+  recommendations: TMDBResponse<TVShow>
+  external_ids: ExternalIds
+}
+
+// Supporting types
+export interface Genre {
+  id: number
+  name: string
+}
+
+export interface Collection {
+  id: number
+  name: string
+  poster_path: string | null
+  backdrop_path: string | null
+}
+
+export interface ProductionCompany {
+  id: number
+  logo_path: string | null
+  name: string
+  origin_country: string
+}
+
+export interface ProductionCountry {
+  iso_3166_1: string
+  name: string
+}
+
+export interface SpokenLanguage {
+  english_name: string
+  iso_639_1: string
+  name: string
+}
+
+export interface Network {
+  id: number
+  logo_path: string | null
+  name: string
+  origin_country: string
+}
+
+export interface Creator {
+  id: number
+  credit_id: string
+  name: string
+  gender: number
+  profile_path: string | null
+}
+
+export interface Season {
+  air_date: string
+  episode_count: number
+  id: number
+  name: string
+  overview: string
+  poster_path: string | null
+  season_number: number
+}
+
+// Credits and cast types
+export interface Credits {
+  cast: CastMember[]
+  crew: CrewMember[]
+}
+
+export interface CastMember {
+  id: number
+  name: string
+  character: string
+  credit_id: string
+  order: number
+  adult: boolean
+  gender: number | null
+  known_for_department: string
+  original_name: string
+  popularity: number
+  profile_path: string | null
+  cast_id?: number
+}
+
+export interface CrewMember {
+  id: number
+  name: string
+  job: string
+  department: string
+  credit_id: string
+  adult: boolean
+  gender: number | null
+  known_for_department: string
+  original_name: string
+  popularity: number
+  profile_path: string | null
+}
+
+// Video types
+export interface VideoResponse {
+  results: Video[]
+}
+
+export interface Video {
+  id: string
+  iso_639_1: string
+  iso_3166_1: string
+  key: string
+  name: string
+  official: boolean
+  published_at: string
+  site: string
+  size: number
+  type: string
+}
+
+// External IDs
+export interface ExternalIds {
+  imdb_id: string | null
+  facebook_id: string | null
+  instagram_id: string | null
+  twitter_id: string | null
+}
+
 // API Response types
 export interface TMDBResponse<T> {
   page: number
