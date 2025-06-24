@@ -97,3 +97,93 @@ export function calculateWatchlistStats(watchlist: WatchlistItem[]): WatchlistSt
   }
 }
 
+// Validation utilities
+export function isValidIMDBId(id: string): boolean {
+  return VALIDATION.IMDB_ID.test(id)
+}
+
+export function isValidYear(year: string): boolean {
+  return VALIDATION.YEAR.test(year)
+}
+
+export function isValidRating(rating: string): boolean {
+  return VALIDATION.RATING.test(rating)
+}
+
+// String utilities
+export function truncateText(text: string, maxLength: number): string {
+  if (text.length <= maxLength) return text
+  return text.slice(0, maxLength).trim() + "..."
+}
+
+export function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+}
+
+export function capitalizeWords(text: string): string {
+  return text.replace(/\b\w/g, (char) => char.toUpperCase())
+}
+
+// Array utilities
+export function removeDuplicates<T>(array: T[], key?: keyof T): T[] {
+  if (!key) {
+    return [...new Set(array)]
+  }
+
+  const seen = new Set()
+  return array.filter((item) => {
+    const value = item[key]
+    if (seen.has(value)) {
+      return false
+    }
+    seen.add(value)
+    return true
+  })
+}
+
+export function sortByProperty<T>(array: T[], property: keyof T, order: "asc" | "desc" = "asc"): T[] {
+  return [...array].sort((a, b) => {
+    const aValue = a[property]
+    const bValue = b[property]
+
+    if (aValue < bValue) return order === "asc" ? -1 : 1
+    if (aValue > bValue) return order === "asc" ? 1 : -1
+    return 0
+  })
+}
+
+// Local storage utilities
+export function safeLocalStorage() {
+  const isClient = typeof window !== "undefined"
+
+  return {
+    getItem: (key: string): string | null => {
+      if (!isClient) return null
+      try {
+        return localStorage.getItem(key)
+      } catch {
+        return null
+      }
+    },
+    setItem: (key: string, value: string): void => {
+      if (!isClient) return
+      try {
+        localStorage.setItem(key, value)
+      } catch {
+        // Silently fail
+      }
+    },
+    removeItem: (key: string): void => {
+      if (!isClient) return
+      try {
+        localStorage.removeItem(key)
+      } catch {
+        // Silently fail
+      }
+    },
+  }
+}
