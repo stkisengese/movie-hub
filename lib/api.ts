@@ -253,3 +253,49 @@ export function getBackdropUrl(path: string | null, size: "w300" | "w780" | "w12
     }
     return `${API_CONFIG.imageBaseUrl}/${size}${path}`
 }
+
+// Utility functions
+export function formatRating(rating: number): string {
+    return rating.toFixed(1)
+}
+
+export function formatReleaseDate(date: string): string {
+    if (!date) return "Unknown"
+    return new Date(date).getFullYear().toString()
+}
+
+export function getMediaTitle(item: MediaItem): string {
+    return item.title || item.name || "Unknown Title"
+}
+
+export function getMediaReleaseDate(item: MediaItem): string {
+    return item.release_date || item.first_air_date || ""
+}
+
+export function isMovie(item: MediaItem): item is MediaItem & { title: string; release_date: string } {
+    return item.media_type === "movie"
+}
+
+export function isTVShow(item: MediaItem): item is MediaItem & { name: string; first_air_date: string } {
+    return item.media_type === "tv"
+}
+
+// Error handling utilities
+export function handleAPIError(error: APIError): string {
+    switch (error.status) {
+        case 401:
+            return "Invalid API key. Please check your configuration."
+        case 404:
+            return "The requested content was not found."
+        case 429:
+            return "Too many requests. Please try again later."
+        case 500:
+            return "Server error. Please try again later."
+        default:
+            return error.message || "An unexpected error occurred."
+    }
+}
+
+export function isAPIError(response: APIResponse<unknown>): response is APIResponse<never> & { error: APIError } {
+    return !response.success && response.error !== undefined
+}
