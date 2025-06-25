@@ -127,7 +127,140 @@ export function DetailPage({ id, type }: DetailPageProps) {
 
     return (
         <div className="min-h-screen">
-            
+            {/* Hero Section */}
+            <div className="relative h-[60vh] md:h-[70vh]">
+                <Image src={backdropUrl || "/placeholder.svg"} alt={title} fill className="object-cover" priority />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+
+                {/* Back Button */}
+                <Button
+                    onClick={() => router.back()}
+                    variant="ghost"
+                    className="absolute top-4 left-4 z-10 bg-black/50 hover:bg-black/70 text-white"
+                >
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Back
+                </Button>
+
+                {/* Share Button */}
+                <Button
+                    onClick={handleShare}
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white"
+                >
+                    <Share2 className="h-4 w-4" />
+                </Button>
+
+                {/* Content */}
+                <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                    <div className="container mx-auto">
+                        <div className="flex flex-col md:flex-row gap-6">
+                            {/* Poster */}
+                            <div className="flex-shrink-0">
+                                <div className="w-40 md:w-48 aspect-poster relative rounded-lg overflow-hidden shadow-2xl">
+                                    <Image src={posterUrl || "/placeholder.svg"} alt={title} fill className="object-cover" />
+                                </div>
+                            </div>
+
+                            {/* Info */}
+                            <div className="flex-1 min-w-0">
+                                <h1 className="text-3xl md:text-5xl font-bold mb-4">{title}</h1>
+
+                                {(movieDetails?.tagline || (tvDetails as any)?.tagline) && (
+                                    <p className="text-lg md:text-xl text-gray-300 italic mb-4">
+                                        {movieDetails?.tagline || (tvDetails as any)?.tagline}
+                                    </p>
+                                )}
+
+                                {/* Meta info */}
+                                <div className="flex flex-wrap items-center gap-4 text-sm mb-6">
+                                    {(movieDetails?.release_date || tvDetails?.first_air_date) && (
+                                        <div className="flex items-center gap-1">
+                                            <Calendar className="h-4 w-4" />
+                                            {formatDate(movieDetails?.release_date || tvDetails?.first_air_date || "")}
+                                        </div>
+                                    )}
+
+                                    {movieDetails?.runtime && (
+                                        <div className="flex items-center gap-1">
+                                            <Clock className="h-4 w-4" />
+                                            {movieDetails.runtime} min
+                                        </div>
+                                    )}
+
+                                    {tvDetails?.number_of_seasons && (
+                                        <div className="flex items-center gap-1">
+                                            <Monitor className="h-4 w-4" />
+                                            {tvDetails.number_of_seasons} Season{tvDetails.number_of_seasons !== 1 ? "s" : ""}
+                                        </div>
+                                    )}
+
+                                    {details.vote_average > 0 && (
+                                        <div className="flex items-center gap-1">
+                                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                            {details.vote_average.toFixed(1)}
+                                        </div>
+                                    )}
+
+                                    <span className="bg-primary-600 px-3 py-1 rounded-full text-sm font-medium">
+                                        {type === "movie" ? "Movie" : "TV Show"}
+                                    </span>
+                                </div>
+
+                                {/* Genres */}
+                                {details.genres && details.genres.length > 0 && (
+                                    <div className="flex flex-wrap gap-2 mb-6">
+                                        {details.genres.map((genre) => (
+                                            <span key={genre.id} className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm">
+                                                {genre.name}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* Action buttons */}
+                                <div className="flex flex-wrap gap-3">
+                                    <Button className="bg-white text-black hover:bg-gray-200">
+                                        <Play className="h-4 w-4 mr-2 fill-current" />
+                                        {type === "movie" ? "Play Movie" : "Watch Show"}
+                                    </Button>
+
+                                    <Button
+                                        onClick={handleWatchlistToggle}
+                                        variant="outline"
+                                        className="border-white text-white hover:bg-white hover:text-black"
+                                    >
+                                        {isInWatchlist ? (
+                                            <>
+                                                <Check className="h-4 w-4 mr-2" />
+                                                In Watchlist
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Plus className="h-4 w-4 mr-2" />
+                                                Add to Watchlist
+                                            </>
+                                        )}
+                                    </Button>
+
+                                    {trailer && (
+                                        <Button
+                                            onClick={() => window.open(`https://www.youtube.com/watch?v=${trailer.key}`, "_blank")}
+                                            variant="outline"
+                                            className="border-white text-white hover:bg-white hover:text-black"
+                                        >
+                                            <Play className="h-4 w-4 mr-2" />
+                                            Watch Trailer
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     )
 }
