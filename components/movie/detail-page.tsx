@@ -261,6 +261,115 @@ export function DetailPage({ id, type }: DetailPageProps) {
                 </div>
             </div>
 
+            {/* Content Sections */}
+            <div className="container mx-auto px-4 py-12">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                    {/* Main Content */}
+                    <div className="lg:col-span-2 space-y-8">
+                        {/* Synopsis */}
+                        <section>
+                            <h2 className="text-2xl font-bold mb-4">Synopsis</h2>
+                            <p className="text-muted-foreground leading-relaxed text-lg">
+                                {details.overview || "No synopsis available."}
+                            </p>
+                        </section>
+
+                        {/* TV Seasons */}
+                        {tvDetails?.seasons && tvDetails.seasons.length > 0 && (
+                            <section>
+                                <h2 className="text-2xl font-bold mb-6">Seasons</h2>
+                                <div className="space-y-4">
+                                    {tvDetails.seasons.map((season) => (
+                                        <div key={season.id} className="flex gap-4 p-4 bg-muted rounded-lg">
+                                            <div className="w-16 h-24 flex-shrink-0 rounded overflow-hidden bg-muted-foreground/20">
+                                                {season.poster_path ? (
+                                                    <Image
+                                                        src={getImageUrl(season.poster_path, "w154") || "/placeholder.svg"}
+                                                        alt={season.name}
+                                                        width={64}
+                                                        height={96}
+                                                        className="object-cover w-full h-full"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center">
+                                                        <Monitor className="h-6 w-6 text-muted-foreground" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="flex-1">
+                                                <h3 className="font-semibold">{season.name}</h3>
+                                                <p className="text-sm text-muted-foreground mb-2">
+                                                    {season.episode_count} episodes
+                                                    {season.air_date && ` • ${formatDate(season.air_date)}`}
+                                                </p>
+                                                {season.overview && (
+                                                    <p className="text-sm text-muted-foreground line-clamp-2">{season.overview}</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
+                        {/* Cast */}
+                        {details.credits?.cast && details.credits.cast.length > 0 && (
+                            <section>
+                                <h2 className="text-2xl font-bold mb-6">Cast</h2>
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                    {details.credits.cast.slice(0, 8).map((person) => (
+                                        <div key={person.id} className="text-center">
+                                            <div className="w-24 h-24 mx-auto mb-3 rounded-full overflow-hidden bg-muted">
+                                                {person.profile_path ? (
+                                                    <Image
+                                                        src={getImageUrl(person.profile_path, "w185") || "/placeholder.svg"}
+                                                        alt={person.name}
+                                                        width={96}
+                                                        height={96}
+                                                        className="object-cover w-full h-full"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center">
+                                                        <Star className="h-8 w-8 text-muted-foreground" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <p className="font-medium">{person.name}</p>
+                                            <p className="text-sm text-muted-foreground">{person.character}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
+                        {/* Videos */}
+                        {details.videos?.results && details.videos.results.length > 0 && (
+                            <section>
+                                <h2 className="text-2xl font-bold mb-6">Videos</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {details.videos.results.slice(0, 4).map((video) => (
+                                        <div
+                                            key={video.id}
+                                            className="bg-muted rounded-lg p-4 cursor-pointer hover:bg-muted/80 transition-colors"
+                                            onClick={() => window.open(`https://www.youtube.com/watch?v=${video.key}`, "_blank")}
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-12 h-12 bg-primary-600 rounded-lg flex items-center justify-center">
+                                                    <Play className="h-5 w-5 text-white fill-current" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-medium">{video.name}</p>
+                                                    <p className="text-sm text-muted-foreground">{video.type}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+                    </div>
+
+            </div>
         </div>
     )
 }
