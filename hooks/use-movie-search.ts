@@ -23,7 +23,7 @@ interface UseMovieSearchReturn {
 }
 
 export function useMovieSearch(debounceMs = 500): UseMovieSearchReturn {
-    const [query, setQuery] = useState("")
+    const [query, setQueryState] = useState("")
     const [results, setResults] = useState<MediaItem[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -45,6 +45,11 @@ export function useMovieSearch(debounceMs = 500): UseMovieSearchReturn {
     const setFilters = useCallback((newFilters: Partial<SearchFilters>) => {
         setFiltersState((prev) => ({ ...prev, ...newFilters }))
         setCurrentPage(1) // Reset to first page when filters change
+    }, [])
+
+    // Add useCallback to setQuery
+    const setQuery = useCallback((newQuery: string) => {
+        setQueryState(newQuery)
     }, [])
 
     // Perform search
@@ -159,17 +164,29 @@ export function useMovieSearch(debounceMs = 500): UseMovieSearchReturn {
         setHasSearched(false)
     }, [])
 
-    // Auto-search when debounced query changes
+    // Update the auto-search effect to be more stable
     useEffect(() => {
-        if (debouncedQuery.trim()) {
-            setCurrentPage(1)
-            searchMovies({ page: 1 })
-        } else {
+        if (!debouncedQuery.trim()) {
             setResults([])
             setHasSearched(false)
             setError(null)
+            return
         }
-    }, [debouncedQuery, filters]) // Include filters to re-search when they change
+
+        // Only search if we have a meaningful query
+        if (debouncedQuery.length >= 2) {
+            setCurrentPage(1)
+            searchMovies({ page: 1 })
+        }
+    }, [debouncedQuery]) // Remove filters from dependencies to prevent infinite loops
+
+    // Separate effect for filter changes
+    useEffect(() => {
+        if (debouncedQuery.trim() && debouncedQuery.length >= 2) {
+            setCurrentPage(1)
+            searchMovies({ page: 1 })
+        }
+    }, [filters.type, filters.year, filters.genre, filters.sortBy, filters.sortOrder])
 
     return {
         query,
