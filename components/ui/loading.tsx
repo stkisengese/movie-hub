@@ -21,9 +21,6 @@ export function Loading({ className, size = "md" }: LoadingProps) {
     )
 }
 
-export function LoadingSkeleton({ className }: { className?: string }) {
-    return <div className={cn("animate-pulse bg-gray-200 dark:bg-gray-700 rounded", className)} />
-}
 
 export function LoadingSpinner({ className }: { className?: string }) {
     return (
