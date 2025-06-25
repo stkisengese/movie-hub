@@ -228,3 +228,23 @@ export function formatNumber(num: number): string {
 export function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max)
 }
+
+// Movie/TV specific utilities
+export function getMovieTitle(details: any): string {
+  return details?.title || details?.name || "Unknown Title"
+}
+
+export function getMovieYear(details: any): string {
+  const date = details?.release_date || details?.first_air_date
+  return formatYear(date)
+}
+
+export function getMovieRuntime(details: any): string {
+  if (details?.runtime) {
+    return formatRuntime(details.runtime)
+  }
+  if (details?.episode_run_time && details.episode_run_time.length > 0) {
+    return formatRuntime(details.episode_run_time[0])
+  }
+  return "Unknown"
+}
