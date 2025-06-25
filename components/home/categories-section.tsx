@@ -6,6 +6,7 @@ import { useState } from "react"
 import { Film, Monitor, Star, Calendar, TrendingUp, Award } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { useRouter } from "next/navigation"
 
 interface Category {
     id: string
@@ -16,7 +17,6 @@ interface Category {
 }
 
 interface CategoriesSectionProps {
-    onCategoryClick?: (categoryId: string) => void
     className?: string
 }
 
@@ -65,8 +65,35 @@ const categories: Category[] = [
     },
 ]
 
-export function CategoriesSection({ onCategoryClick, className }: CategoriesSectionProps) {
+export function CategoriesSection({ className }: CategoriesSectionProps) {
     const [hoveredCategory, setHoveredCategory] = useState<string | null>(null)
+    const router = useRouter()
+
+    const handleCategoryClick = (categoryId: string) => {
+        // Navigate to search page with appropriate filters
+        switch (categoryId) {
+            case "trending-movies":
+                router.push("/search?type=movie&sort=popularity")
+                break
+            case "trending-tv":
+                router.push("/search?type=tv&sort=popularity")
+                break
+            case "top-rated-movies":
+                router.push("/search?type=movie&sort=vote_average")
+                break
+            case "top-rated-tv":
+                router.push("/search?type=tv&sort=vote_average")
+                break
+            case "new-releases":
+                router.push("/search?sort=release_date")
+                break
+            case "classic-movies":
+                router.push("/search?type=movie&year=1980")
+                break
+            default:
+                router.push("/search")
+        }
+    }
 
     return (
         <section className={cn("py-12 bg-muted/30", className)}>
@@ -88,7 +115,7 @@ export function CategoriesSection({ onCategoryClick, className }: CategoriesSect
                             )}
                             onMouseEnter={() => setHoveredCategory(category.id)}
                             onMouseLeave={() => setHoveredCategory(null)}
-                            onClick={() => onCategoryClick?.(category.id)}
+                            onClick={() => handleCategoryClick(category.id)}
                         >
                             {/* Background Gradient */}
                             <div
