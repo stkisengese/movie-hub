@@ -181,6 +181,157 @@ export function MovieDetailModal({ item, isOpen, onClose, onPlayClick }: MovieDe
           </div>
         </div>
 
+        {/* Content */}
+        <div className="p-6">
+          {/* Tab Navigation */}
+          <div className="flex border-b mb-6">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={cn(
+                  "px-4 py-2 font-medium text-sm border-b-2 transition-colors",
+                  activeTab === tab.id
+                    ? "border-primary-600 text-primary-600"
+                    : "border-transparent text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Tab Content */}
+          <div className="min-h-[300px]">
+            {isLoading ? (
+              <div className="space-y-4">
+                <LoadingSkeleton className="h-4 w-full" />
+                <LoadingSkeleton className="h-4 w-3/4" />
+                <LoadingSkeleton className="h-4 w-1/2" />
+              </div>
+            ) : error ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>Failed to load details: {error}</p>
+              </div>
+            ) : (
+              <>
+                {/* Overview Tab */}
+                {activeTab === "overview" && (
+                  <div className="space-y-6">
+                    {/* Synopsis */}
+                    <div>
+                      <h3 className="text-lg font-semibold mb-3">Synopsis</h3>
+                      <p className="text-muted-foreground leading-relaxed">
+                        {(details as any)?.overview || item.overview || "No synopsis available."}
+                      </p>
+                    </div>
+
+                    {/* Ratings */}
+                    {ratings.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3">Ratings</h3>
+                        <MultipleRatings ratings={ratings} />
+                      </div>
+                    )}
+
+                    {/* Details Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Left Column */}
+                      <div className="space-y-4">
+                        {details?.genres && details.genres.length > 0 && (
+                          <div>
+                            <h4 className="font-medium mb-2">Genres</h4>
+                            <div className="flex flex-wrap gap-2">
+                              {details.genres.map((genre) => (
+                                <span key={genre.id} className="bg-muted px-3 py-1 rounded-full text-sm">
+                                  {genre.name}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {details && "production_companies" in details && details.production_companies && (
+                          <div>
+                            <h4 className="font-medium mb-2">Production</h4>
+                            <p className="text-sm text-muted-foreground">
+                              {details.production_companies.map((company) => company.name).join(", ")}
+                            </p>
+                          </div>
+                        )}
+
+                        {omdbDetails?.Director && (
+                          <div>
+                            <h4 className="font-medium mb-2">Director</h4>
+                            <p className="text-sm text-muted-foreground">{omdbDetails.Director}</p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Right Column */}
+                      <div className="space-y-4">
+                        {omdbDetails?.Writer && (
+                          <div>
+                            <h4 className="font-medium mb-2">Writers</h4>
+                            <p className="text-sm text-muted-foreground">{omdbDetails.Writer}</p>
+                          </div>
+                        )}
+
+                        {details &&
+                          "budget" in details &&
+                          (details as MovieDetails)?.budget &&
+                          (details as MovieDetails)?.budget > 0 && (
+                            <div>
+                              <h4 className="font-medium mb-2">Budget</h4>
+                              <p className="text-sm text-muted-foreground">
+                                ${formatNumber((details as MovieDetails)?.budget)}
+                              </p>
+                            </div>
+                          )}
+
+                        {details &&
+                          "revenue" in details &&
+                          (details as MovieDetails)?.revenue &&
+                          (details as MovieDetails)?.revenue > 0 && (
+                            <div>
+                              <h4 className="font-medium mb-2">Box Office</h4>
+                              <p className="text-sm text-muted-foreground">
+                                ${formatNumber((details as MovieDetails)?.revenue)}
+                              </p>
+                            </div>
+                          )}
+
+                        {omdbDetails?.Awards && omdbDetails.Awards !== "N/A" && (
+                          <div>
+                            <h4 className="font-medium mb-2">Awards</h4>
+                            <p className="text-sm text-muted-foreground">{omdbDetails.Awards}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* External Links */}
+                    {details?.external_ids && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3">External Links</h3>
+                        <div className="flex gap-3">
+                          {details.external_ids.imdb_id && (
+                            <a
+                              href={`https://www.imdb.com/title/${details.external_ids.imdb_id}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 text-sm text-primary-600 hover:text-primary-700"
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                              IMDb
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
       </ModalContent>
     </Modal>
   )
