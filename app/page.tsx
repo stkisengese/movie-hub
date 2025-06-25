@@ -7,7 +7,7 @@ import { TrendingSection } from "@/components/home/trending-section"
 import { CategoriesSection } from "@/components/home/categories-section"
 import { StatsSection } from "@/components/home/stats-section"
 import { NewsletterSection } from "@/components/home/newsletter-section"
-import { Modal, ModalContent, ModalHeader, ModalTitle } from "@/components/ui/modal"
+import { MovieDetailModal } from "@/components/movie/movie-detail-modal"
 import { useTrendingMovies, useWatchlist } from "@/hooks"
 import type { MediaItem } from "@/types"
 
@@ -29,9 +29,9 @@ export default function HomePage() {
   }
 
   const handlePlayClick = (item: MediaItem) => {
-    // In a real app, this would navigate to a player or external service
-    console.log("Play clicked for:", item)
-    handleItemClick(item)
+    // Navigate to dedicated page for full experience
+    const path = item.media_type === "movie" ? `/movie/${item.id}` : `/tv/${item.id}`
+    router.push(path)
   }
 
   const handleCategoryClick = (categoryId: string) => {
@@ -95,27 +95,15 @@ export default function HomePage() {
       <NewsletterSection />
 
       {/* Movie Details Modal */}
-      <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <ModalContent>
-          <ModalHeader>
-            <ModalTitle>{selectedItem ? selectedItem.title || selectedItem.name : "Movie Details"}</ModalTitle>
-          </ModalHeader>
-          <div className="py-4">
-            {selectedItem && (
-              <div className="space-y-4">
-                <p className="text-muted-foreground">{selectedItem.overview}</p>
-                <div className="flex gap-4 text-sm">
-                  <span>Rating: {selectedItem.vote_average.toFixed(1)}/10</span>
-                  <span>Release: {selectedItem.release_date || selectedItem.first_air_date || "Unknown"}</span>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  This is a preview. Full movie details will be implemented in the next issue.
-                </p>
-              </div>
-            )}
-          </div>
-        </ModalContent>
-      </Modal>
+      <MovieDetailModal
+        item={selectedItem}
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false)
+          setSelectedItem(null)
+        }}
+        onPlayClick={handlePlayClick}
+      />
     </div>
   )
 }
