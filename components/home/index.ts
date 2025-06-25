@@ -1,0 +1,5 @@
+export * from "./hero-section"
+export * from "./trending-section"
+export * from "./categories-section"
+export * from "./stats-section"
+export * from "./newsletter-section"
