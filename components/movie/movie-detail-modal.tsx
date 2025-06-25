@@ -411,6 +411,110 @@ export function MovieDetailModal({ item, isOpen, onClose, onPlayClick }: MovieDe
                   </div>
                 )}
 
+                {/* Videos Tab */}
+                {activeTab === "videos" && (
+                  <div>
+                    {details?.videos?.results && details.videos.results.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {details.videos.results.slice(0, 6).map((video) => (
+                          <div
+                            key={video.id}
+                            className="bg-muted rounded-lg p-4 cursor-pointer hover:bg-muted/80 transition-colors"
+                            onClick={() => setSelectedVideo(video)}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-12 h-12 bg-primary-600 rounded-lg flex items-center justify-center">
+                                <Play className="h-5 w-5 text-white fill-current" />
+                              </div>
+                              <div>
+                                <p className="font-medium">{video.name}</p>
+                                <p className="text-sm text-muted-foreground">{video.type}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <Play className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                        <p>No videos available</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Similar Tab */}
+                {activeTab === "similar" && (
+                  <div>
+                    {details?.similar?.results && details.similar.results.length > 0 ? (
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {details.similar.results.slice(0, 8).map((similarItem) => {
+                          // Convert to MediaItem-like structure for consistent access
+                          const mediaItem = {
+                            ...similarItem,
+                            media_type: item?.media_type || "movie",
+                            title: (similarItem as any).title,
+                            name: (similarItem as any).name,
+                            release_date: (similarItem as any).release_date,
+                            first_air_date: (similarItem as any).first_air_date,
+                          }
+
+                          const title = mediaItem.title || mediaItem.name || "Unknown Title"
+                          const year =
+                            mediaItem.release_date || mediaItem.first_air_date
+                              ? new Date(mediaItem.release_date || mediaItem.first_air_date || "").getFullYear()
+                              : ""
+
+                          return (
+                            <div key={similarItem.id} className="group cursor-pointer">
+                              <div className="aspect-poster rounded-lg overflow-hidden mb-2">
+                                <Image
+                                  src={getImageUrl(similarItem.poster_path, "w342") || "/placeholder.svg"}
+                                  alt={title}
+                                  width={200}
+                                  height={300}
+                                  className="object-cover w-full h-full group-hover:scale-105 transition-transform"
+                                />
+                              </div>
+                              <p className="font-medium text-sm line-clamp-2">{title}</p>
+                              <p className="text-xs text-muted-foreground">{year}</p>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <Film className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                        <p>No similar content found</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Video Player Modal */}
+        {selectedVideo && (
+          <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+            <div className="relative w-full max-w-4xl aspect-video">
+              <button
+                onClick={() => setSelectedVideo(null)}
+                className="absolute -top-12 right-0 text-white hover:text-gray-300"
+              >
+                <X className="h-6 w-6" />
+              </button>
+              <iframe
+                src={`https://www.youtube.com/embed/${selectedVideo.key}?autoplay=1`}
+                title={selectedVideo.name}
+                className="w-full h-full rounded-lg"
+                allowFullScreen
+                allow="autoplay; encrypted-media"
+              />
+            </div>
+          </div>
+        )}
       </ModalContent>
     </Modal>
   )
