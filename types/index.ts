@@ -311,6 +311,8 @@ export interface WatchlistStats {
   averageRating: number
 }
 
+export type WatchlistStatsType = WatchlistStats
+
 // Error handling types
 export interface APIError {
   message: string
