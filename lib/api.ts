@@ -268,6 +268,16 @@ export function getMediaTitle(item: MediaItem): string {
     return item.title || item.name || "Unknown Title"
 }
 
+export function formatYear(date: string): string {
+    if (!date) return "Unknown"
+    return new Date(date).getFullYear().toString()
+}
+
+export function getMediaYear(item: MediaItem): string {
+    const date = item.release_date || item.first_air_date || "";
+    return formatYear(date)
+}
+
 export function getMediaReleaseDate(item: MediaItem): string {
     return item.release_date || item.first_air_date || ""
 }
