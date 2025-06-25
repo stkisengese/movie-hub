@@ -36,27 +36,23 @@ export default function SearchPage() {
         const type = searchParams.get("type")
         const sort = searchParams.get("sort")
 
+        // Set initial state without triggering searches
         if (initialQuery) {
             movieSearch.setQuery(initialQuery)
         }
 
         // Set filters based on URL params
-        const newFilters: any = {}
         if (type && (type === "movie" || type === "tv")) {
-            newFilters.type = type
+            movieSearch.setFilters({ type })
         }
         if (sort) {
-            newFilters.sortBy = sort
-        }
-
-        if (Object.keys(newFilters).length > 0) {
-            movieSearch.setFilters(newFilters)
+            movieSearch.setFilters({ sortBy: sort })
         }
 
         setIsInitialized(true)
-    }, [searchParams, isInitialized, movieSearch.setQuery, movieSearch.setFilters])
+    }, []) // Remove all dependencies to run only once
 
-    // Update URL when search changes (but not on initial load)
+    // Separate effect for URL updates (after initialization)
     useEffect(() => {
         if (!isInitialized) return
 
@@ -75,8 +71,21 @@ export default function SearchPage() {
         }
 
         const newUrl = params.toString() ? `/search?${params.toString()}` : "/search"
-        router.replace(newUrl, { scroll: false })
-    }, [movieSearch.query, movieSearch.filters, router, isInitialized])
+
+        // Use a timeout to prevent rapid URL updates
+        const timeoutId = setTimeout(() => {
+            router.replace(newUrl, { scroll: false })
+        }, 100)
+
+        return () => clearTimeout(timeoutId)
+    }, [
+        movieSearch.query,
+        movieSearch.filters.type,
+        movieSearch.filters.year,
+        movieSearch.filters.genre,
+        router,
+        isInitialized,
+    ])
 
     // Add to search history when search is performed
     useEffect(() => {
