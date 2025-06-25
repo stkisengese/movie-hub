@@ -332,6 +332,85 @@ export function MovieDetailModal({ item, isOpen, onClose, onPlayClick }: MovieDe
                   </div>
                 )}
 
+                {/* Cast Tab */}
+                {activeTab === "cast" && (
+                  <div className="space-y-6">
+                    {details?.credits?.cast && details.credits.cast.length > 0 ? (
+                      <>
+                        <div>
+                          <h3 className="text-lg font-semibold mb-4">Cast</h3>
+                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {details.credits.cast.slice(0, 12).map((person) => (
+                              <div key={person.id} className="text-center">
+                                <div className="w-20 h-20 mx-auto mb-2 rounded-full overflow-hidden bg-muted">
+                                  {person.profile_path ? (
+                                    <Image
+                                      src={getImageUrl(person.profile_path, "w185") || "/placeholder.svg"}
+                                      alt={person.name}
+                                      width={80}
+                                      height={80}
+                                      className="object-cover w-full h-full"
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center">
+                                      <Users className="h-8 w-8 text-muted-foreground" />
+                                    </div>
+                                  )}
+                                </div>
+                                <p className="font-medium text-sm">{person.name}</p>
+                                <p className="text-xs text-muted-foreground">{person.character}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {details.credits.crew && details.credits.crew.length > 0 && (
+                          <div>
+                            <h3 className="text-lg font-semibold mb-4">Key Crew</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              {details.credits.crew
+                                .filter((person) =>
+                                  ["Director", "Producer", "Executive Producer", "Screenplay", "Writer"].includes(
+                                    person.job,
+                                  ),
+                                )
+                                .slice(0, 8)
+                                .map((person) => (
+                                  <div key={`${person.id}-${person.job}`} className="flex items-center gap-3">
+                                    <div className="w-12 h-12 rounded-full overflow-hidden bg-muted flex-shrink-0">
+                                      {person.profile_path ? (
+                                        <Image
+                                          src={getImageUrl(person.profile_path, "w185") || "/placeholder.svg"}
+                                          alt={person.name}
+                                          width={48}
+                                          height={48}
+                                          className="object-cover w-full h-full"
+                                        />
+                                      ) : (
+                                        <div className="w-full h-full flex items-center justify-center">
+                                          <Users className="h-5 w-5 text-muted-foreground" />
+                                        </div>
+                                      )}
+                                    </div>
+                                    <div>
+                                      <p className="font-medium text-sm">{person.name}</p>
+                                      <p className="text-xs text-muted-foreground">{person.job}</p>
+                                    </div>
+                                  </div>
+                                ))}
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                        <p>Cast information not available</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
       </ModalContent>
     </Modal>
   )
