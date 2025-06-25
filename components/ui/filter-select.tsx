@@ -152,20 +152,23 @@ interface FilterSelectProps {
     className?: string
 }
 
-export function FilterSelect({
+export const FilterSelect = React.memo(function FilterSelect({
     value,
     onValueChange,
     options,
     placeholder = "Select...",
     className,
 }: FilterSelectProps) {
+    // Memoize the options to prevent unnecessary re-renders
+    const memoizedOptions = React.useMemo(() => options, [options])
+
     return (
         <Select value={value} onValueChange={onValueChange}>
             <SelectTrigger className={cn("w-[180px]", className)}>
                 <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent>
-                {options.map((option) => (
+                {memoizedOptions.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                         {option.label}
                     </SelectItem>
@@ -173,4 +176,4 @@ export function FilterSelect({
             </SelectContent>
         </Select>
     )
-}
+})
