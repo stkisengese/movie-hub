@@ -369,6 +369,148 @@ export function DetailPage({ id, type }: DetailPageProps) {
                         )}
                     </div>
 
+                    {/* Sidebar */}
+                    <div className="space-y-8">
+                        {/* Ratings */}
+                        {ratings.length > 0 && (
+                            <section>
+                                <h3 className="text-xl font-bold mb-4">Ratings</h3>
+                                <MultipleRatings ratings={ratings} />
+                            </section>
+                        )}
+
+                        {/* Details */}
+                        <section>
+                            <h3 className="text-xl font-bold mb-4">Details</h3>
+                            <div className="space-y-3 text-sm">
+                                {/* Movie-specific details */}
+                                {movieDetails && (
+                                    <>
+                                        {omdbDetails?.Director && (
+                                            <div>
+                                                <span className="font-medium">Director:</span>
+                                                <p className="text-muted-foreground">{omdbDetails.Director}</p>
+                                            </div>
+                                        )}
+
+                                        {omdbDetails?.Writer && (
+                                            <div>
+                                                <span className="font-medium">Writers:</span>
+                                                <p className="text-muted-foreground">{omdbDetails.Writer}</p>
+                                            </div>
+                                        )}
+
+                                        {movieDetails.budget && movieDetails.budget > 0 && (
+                                            <div>
+                                                <span className="font-medium">Budget:</span>
+                                                <p className="text-muted-foreground">${formatNumber(movieDetails.budget)}</p>
+                                            </div>
+                                        )}
+
+                                        {movieDetails.revenue && movieDetails.revenue > 0 && (
+                                            <div>
+                                                <span className="font-medium">Box Office:</span>
+                                                <p className="text-muted-foreground">${formatNumber(movieDetails.revenue)}</p>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+
+                                {/* TV-specific details */}
+                                {tvDetails && (
+                                    <>
+                                        {tvDetails.created_by && tvDetails.created_by.length > 0 && (
+                                            <div>
+                                                <span className="font-medium">Created by:</span>
+                                                <p className="text-muted-foreground">
+                                                    {tvDetails.created_by.map((creator) => creator.name).join(", ")}
+                                                </p>
+                                            </div>
+                                        )}
+
+                                        {tvDetails.networks && tvDetails.networks.length > 0 && (
+                                            <div>
+                                                <span className="font-medium">Network:</span>
+                                                <p className="text-muted-foreground">
+                                                    {tvDetails.networks.map((network) => network.name).join(", ")}
+                                                </p>
+                                            </div>
+                                        )}
+
+                                        {tvDetails.number_of_episodes && (
+                                            <div>
+                                                <span className="font-medium">Episodes:</span>
+                                                <p className="text-muted-foreground">{tvDetails.number_of_episodes}</p>
+                                            </div>
+                                        )}
+
+                                        {tvDetails.status && (
+                                            <div>
+                                                <span className="font-medium">Status:</span>
+                                                <p className="text-muted-foreground">{tvDetails.status}</p>
+                                            </div>
+                                        )}
+
+                                        {tvDetails.last_air_date && (
+                                            <div>
+                                                <span className="font-medium">Last Aired:</span>
+                                                <p className="text-muted-foreground">{formatDate(tvDetails.last_air_date)}</p>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+
+                                {/* Common details */}
+                                {details.production_companies && details.production_companies.length > 0 && (
+                                    <div>
+                                        <span className="font-medium">Production:</span>
+                                        <p className="text-muted-foreground">
+                                            {details.production_companies.map((company) => company.name).join(", ")}
+                                        </p>
+                                    </div>
+                                )}
+
+                                {omdbDetails?.Awards && omdbDetails.Awards !== "N/A" && (
+                                    <div>
+                                        <span className="font-medium">Awards:</span>
+                                        <p className="text-muted-foreground">{omdbDetails.Awards}</p>
+                                    </div>
+                                )}
+                            </div>
+                        </section>
+
+                        {/* External Links */}
+                        {details.external_ids && (
+                            <section>
+                                <h3 className="text-xl font-bold mb-4">External Links</h3>
+                                <div className="space-y-2">
+                                    {details.external_ids.imdb_id && (
+                                        <a
+                                            href={`https://www.imdb.com/title/${details.external_ids.imdb_id}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center gap-2 text-primary-600 hover:text-primary-700"
+                                        >
+                                            <ExternalLink className="h-4 w-4" />
+                                            View on IMDb
+                                        </a>
+                                    )}
+                                    {details.homepage && (
+                                        <a
+                                            href={details.homepage}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center gap-2 text-primary-600 hover:text-primary-700"
+                                        >
+                                            <ExternalLink className="h-4 w-4" />
+                                            Official Website
+                                        </a>
+                                    )}
+                                </div>
+                            </section>
+                        )}
+                    </div>
+                </div>
 
                 {/* Similar Content */}
                 {details.similar?.results && details.similar.results.length > 0 && (
