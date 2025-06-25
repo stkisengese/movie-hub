@@ -40,7 +40,13 @@ export function MovieCard({
     }
 
     const handleCardClick = () => {
-        onCardClick?.(item)
+        if (onCardClick) {
+            onCardClick(item)
+        } else {
+            // Default navigation to detail page
+            const path = item.media_type === "movie" ? `/movie/${item.id}` : `/tv/${item.id}`
+            window.location.href = path
+        }
     }
 
     const handleWatchlistClick = (e: React.MouseEvent) => {
