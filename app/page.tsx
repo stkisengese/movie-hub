@@ -44,32 +44,6 @@ export default function HomePage() {
     [router],
   )
 
-  const handleCategoryClick = (categoryId: string) => {
-    // Navigate to category-specific pages
-    switch (categoryId) {
-      case "trending-movies":
-        router.push("/movies?filter=trending")
-        break
-      case "trending-tv":
-        router.push("/tv?filter=trending")
-        break
-      case "top-rated-movies":
-        router.push("/movies?filter=top-rated")
-        break
-      case "top-rated-tv":
-        router.push("/tv?filter=top-rated")
-        break
-      case "new-releases":
-        router.push("/movies?filter=new-releases")
-        break
-      case "classic-movies":
-        router.push("/movies?filter=classic")
-        break
-      default:
-        router.push("/search")
-    }
-  }
-
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -96,7 +70,7 @@ export default function HomePage() {
       />
 
       {/* Categories Section */}
-      <CategoriesSection onCategoryClick={handleCategoryClick} />
+      <CategoriesSection />
 
       {/* Stats Section */}
       <StatsSection />
