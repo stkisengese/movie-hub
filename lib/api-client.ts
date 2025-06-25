@@ -89,7 +89,40 @@ class APIClient {
         return this.request(`/movies/discover?${searchParams.toString()}`)
     }
 
-    
+    // Genres
+    async getGenres(mediaType: "movie" | "tv" = "movie"): Promise<{ genres: Genre[] }> {
+        return this.request(`/genres?media_type=${mediaType}`)
+    }
+
+    // Health check
+    async healthCheck(): Promise<{
+        status: string
+        timestamp: string
+        services: Record<string, string>
+        version: string
+    }> {
+        return this.request("/health")
+    }
+
+    // Watchlist (server-side storage demo)
+    async getWatchlist(userId?: string): Promise<{ watchlist: any[]; count: number }> {
+        const params = userId ? `?user_id=${userId}` : ""
+        return this.request(`/watchlist${params}`)
+    }
+
+    async toggleWatchlist(item: any, userId?: string): Promise<{ message: string; watchlist: any[] }> {
+        return this.request("/watchlist", {
+            method: "POST",
+            body: JSON.stringify({ userId, item }),
+        })
+    }
+
+    async clearWatchlist(userId?: string): Promise<{ message: string; watchlist: any[] }> {
+        const params = userId ? `?user_id=${userId}` : ""
+        return this.request(`/watchlist${params}`, {
+            method: "DELETE",
+        })
+    }
 }
 
 export const apiClient = new APIClient()
