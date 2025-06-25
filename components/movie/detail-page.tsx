@@ -369,6 +369,28 @@ export function DetailPage({ id, type }: DetailPageProps) {
                         )}
                     </div>
 
+
+                {/* Similar Content */}
+                {details.similar?.results && details.similar.results.length > 0 && (
+                    <section className="mt-16">
+                        <h2 className="text-2xl font-bold mb-6">Similar {type === "movie" ? "Movies" : "TV Shows"}</h2>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                            {details.similar.results.slice(0, 10).map((item) => (
+                                <MovieCard
+                                    key={item.id}
+                                    item={{
+                                        ...item,
+                                        media_type: type,
+                                    }}
+                                    onCardClick={(item) => router.push(`/${type}/${item.id}`)}
+                                    onWatchlistToggle={watchlist.toggleWatchlist}
+                                    isInWatchlist={watchlist.isInWatchlist(item.id, type)}
+                                    size="sm"
+                                />
+                            ))}
+                        </div>
+                    </section>
+                )}
             </div>
         </div>
     )
