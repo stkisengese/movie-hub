@@ -44,19 +44,19 @@ export function Header() {
                             Home
                         </Link>
                         <Link
-                            href="/movies"
+                            href="/search?type=movie"
                             className="text-sm font-medium transition-colors hover:text-primary-600 dark:hover:text-primary-400"
                         >
                             Movies
                         </Link>
                         <Link
-                            href="/tv"
+                            href="/search?type=tv"
                             className="text-sm font-medium transition-colors hover:text-primary-600 dark:hover:text-primary-400"
                         >
                             TV Shows
                         </Link>
                         <Link
-                            href="/trending"
+                            href="/search?sort=popularity"
                             className="text-sm font-medium transition-colors hover:text-primary-600 dark:hover:text-primary-400"
                         >
                             Trending
@@ -98,19 +98,19 @@ export function Header() {
                         Home
                     </Link>
                     <Link
-                        href="/movies"
+                        href="/search?type=movie"
                         className="text-sm font-medium transition-colors hover:text-primary-600 dark:hover:text-primary-400"
                     >
                         Movies
                     </Link>
                     <Link
-                        href="/tv"
+                        href="/search?type=tv"
                         className="text-sm font-medium transition-colors hover:text-primary-600 dark:hover:text-primary-400"
                     >
                         TV Shows
                     </Link>
                     <Link
-                        href="/trending"
+                        href="/search?sort=popularity"
                         className="text-sm font-medium transition-colors hover:text-primary-600 dark:hover:text-primary-400"
                     >
                         Trending
