@@ -32,10 +32,26 @@ export default function SearchPage() {
 
     // Initialize search from URL params
     useEffect(() => {
+        const type = searchParams.get("type")
+        const sort = searchParams.get("sort")
+
         if (initialQuery) {
             movieSearch.setQuery(initialQuery)
         }
-    }, [initialQuery, movieSearch.setQuery])
+
+        // Set filters based on URL params
+        const newFilters: any = {}
+        if (type && (type === "movie" || type === "tv")) {
+            newFilters.type = type
+        }
+        if (sort) {
+            newFilters.sortBy = sort
+        }
+
+        if (Object.keys(newFilters).length > 0) {
+            movieSearch.setFilters(newFilters)
+        }
+    }, [initialQuery, searchParams, movieSearch.setQuery, movieSearch.setFilters])
 
     // Update URL when search changes
     useEffect(() => {
@@ -90,17 +106,53 @@ export default function SearchPage() {
     const hasActiveFilters =
         movieSearch.filters.type !== "all" || movieSearch.filters.year !== "all" || movieSearch.filters.genre !== "all"
 
+    const getPageTitle = () => {
+        const type = searchParams.get("type")
+        const sort = searchParams.get("sort")
+
+        if (type === "movie" && !movieSearch.query) {
+            return "Discover Movies"
+        }
+        if (type === "tv" && !movieSearch.query) {
+            return "Discover TV Shows"
+        }
+        if (sort === "popularity" && !movieSearch.query) {
+            return "Trending Now"
+        }
+        if (sort === "vote_average" && !movieSearch.query) {
+            return "Top Rated"
+        }
+        return "Search Movies & TV Shows"
+    }
+
+    const getPageDescription = () => {
+        const type = searchParams.get("type")
+        const sort = searchParams.get("sort")
+
+        if (type === "movie" && !movieSearch.query) {
+            return "Explore our extensive collection of movies from all genres and eras"
+        }
+        if (type === "tv" && !movieSearch.query) {
+            return "Find your next binge-worthy TV series from our vast catalog"
+        }
+        if (sort === "popularity" && !movieSearch.query) {
+            return "See what's trending in movies and TV shows right now"
+        }
+        if (sort === "vote_average" && !movieSearch.query) {
+            return "Discover the highest-rated movies and TV shows"
+        }
+        return "Discover your next favorite movie or TV show from our extensive collection"
+    }
+
     return (
         <div className="container mx-auto px-4 py-8">
             {/* Header */}
             <div className="text-center mb-8">
                 <h1 className="text-3xl md:text-4xl font-bold mb-4 flex items-center justify-center gap-3">
                     <Search className="h-8 w-8 text-primary-600" />
-                    Search Movies & TV Shows
+                    {getPageTitle()}
                 </h1>
-                <p className="text-muted-foreground">
-                    Discover your next favorite movie or TV show from our extensive collection
-                </p>
+                <p className="text-muted-foreground">{getPageDescription()}</p>
             </div>
 
             {/* Search Input */}
