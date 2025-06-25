@@ -55,6 +55,7 @@ export function useMovieSearch(debounceMs = 500): UseMovieSearchReturn {
             if (!searchQuery.trim()) {
                 setResults([])
                 setHasSearched(false)
+                setError(null)
                 return
             }
 
@@ -74,13 +75,49 @@ export function useMovieSearch(debounceMs = 500): UseMovieSearchReturn {
                     const { results: newResults, page, total_pages, total_results } = response.data
 
                     // Filter results based on type if specified
-                    let filteredResults = newResults
+                    let filteredResults = newResults.filter((item) => item.media_type !== "person")
+
                     if (filters.type !== "all") {
-                        filteredResults = newResults.filter((item) => item.media_type === filters.type)
+                        filteredResults = filteredResults.filter((item) => item.media_type === filters.type)
+                    }
+
+                    // Apply year filter
+                    if (filters.year !== "all") {
+                        const targetYear = Number.parseInt(filters.year)
+                        filteredResults = filteredResults.filter((item) => {
+                            const itemYear = item.release_date || item.first_air_date
+                            if (!itemYear) return false
+                            return new Date(itemYear).getFullYear() === targetYear
+                        })
+                    }
+
+                    // Sort results
+                    if (filters.sortBy !== "popularity") {
+                        filteredResults.sort((a, b) => {
+                            let comparison = 0
+
+                            switch (filters.sortBy) {
+                                case "vote_average":
+                                    comparison = a.vote_average - b.vote_average
+                                    break
+                                case "release_date":
+                                    const dateA = new Date(a.release_date || a.first_air_date || "").getTime()
+                                    const dateB = new Date(b.release_date || b.first_air_date || "").getTime()
+                                    comparison = dateA - dateB
+                                    break
+                                case "title":
+                                    const titleA = a.title || a.name || ""
+                                    const titleB = b.title || b.name || ""
+                                    comparison = titleA.localeCompare(titleB)
+                                    break
+                            }
+
+                            return filters.sortOrder === "asc" ? comparison : -comparison
+                        })
                     }
 
                     // If loading more (page > 1), append to existing results
-                    if (page > 1) {
+                    if (page > 1 && params?.page) {
                         setResults((prev) => [...prev, ...filteredResults])
                     } else {
                         setResults(filteredResults)
@@ -130,6 +167,7 @@ export function useMovieSearch(debounceMs = 500): UseMovieSearchReturn {
         } else {
             setResults([])
             setHasSearched(false)
+            setError(null)
         }
     }, [debouncedQuery, filters]) // Include filters to re-search when they change
 
