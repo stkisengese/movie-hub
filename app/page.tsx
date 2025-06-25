@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { HeroSection } from "@/components/home/hero-section"
 import { TrendingSection } from "@/components/home/trending-section"
@@ -23,16 +23,26 @@ export default function HomePage() {
   // Get featured items for hero (top 5 trending)
   const featuredItems = trending.movies.slice(0, 5)
 
-  const handleItemClick = (item: MediaItem) => {
+  const handleItemClick = useCallback((item: MediaItem) => {
     setSelectedItem(item)
     setIsModalOpen(true)
-  }
+  }, [])
 
-  const handlePlayClick = (item: MediaItem) => {
-    // Navigate to dedicated page for full experience
-    const path = item.media_type === "movie" ? `/movie/${item.id}` : `/tv/${item.id}`
-    router.push(path)
-  }
+  const handleWatchlistToggle = useCallback(
+    (item: MediaItem) => {
+      watchlist.toggleWatchlist(item)
+    },
+    [watchlist.toggleWatchlist],
+  )
+
+  const handlePlayClick = useCallback(
+    (item: MediaItem) => {
+      // Navigate to dedicated page for full experience
+      const path = item.media_type === "movie" ? `/movie/${item.id}` : `/tv/${item.id}`
+      router.push(path)
+    },
+    [router],
+  )
 
   const handleCategoryClick = (categoryId: string) => {
     // Navigate to category-specific pages
@@ -71,7 +81,7 @@ export default function HomePage() {
         items={trending.movies.filter((item) => item.media_type === "movie").slice(0, 20)}
         isLoading={trending.isLoading}
         onItemClick={handleItemClick}
-        onWatchlistToggle={watchlist.toggleWatchlist}
+        onWatchlistToggle={handleWatchlistToggle}
         isInWatchlist={watchlist.isInWatchlist}
       />
 
@@ -81,7 +91,7 @@ export default function HomePage() {
         items={trending.movies.filter((item) => item.media_type === "tv").slice(0, 20)}
         isLoading={trending.isLoading}
         onItemClick={handleItemClick}
-        onWatchlistToggle={watchlist.toggleWatchlist}
+        onWatchlistToggle={handleWatchlistToggle}
         isInWatchlist={watchlist.isInWatchlist}
       />
 
