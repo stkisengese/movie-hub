@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { ChevronLeft, ChevronRight, TrendingUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { MovieCard } from "@/components/ui/movie-card"
@@ -30,6 +30,20 @@ export function TrendingSection({
     const [scrollPosition, setScrollPosition] = useState(0)
     const [canScrollLeft, setCanScrollLeft] = useState(false)
     const [canScrollRight, setCanScrollRight] = useState(true)
+
+    const handleItemClick = useCallback(
+        (item: MediaItem) => {
+            onItemClick?.(item)
+        },
+        [onItemClick],
+    )
+
+    const handleWatchlistToggle = useCallback(
+        (item: MediaItem) => {
+            onWatchlistToggle?.(item)
+        },
+        [onWatchlistToggle],
+    )
 
     const handleScroll = (direction: "left" | "right") => {
         const container = document.getElementById(`trending-${title.replace(/\s+/g, "-").toLowerCase()}`)
@@ -124,8 +138,8 @@ export function TrendingSection({
                             <div key={`${item.id}-${item.media_type}`} className="flex-shrink-0">
                                 <MovieCard
                                     item={item}
-                                    onCardClick={onItemClick}
-                                    onWatchlistToggle={onWatchlistToggle}
+                                    onCardClick={handleItemClick}
+                                    onWatchlistToggle={handleWatchlistToggle}
                                     isInWatchlist={isInWatchlist?.(item.id, item.media_type as "movie" | "tv") || false}
                                     size="md"
                                 />

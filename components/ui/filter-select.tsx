@@ -152,20 +152,32 @@ interface FilterSelectProps {
     className?: string
 }
 
-export function FilterSelect({
+// Update the FilterSelect component to be more stable
+export const FilterSelect = React.memo(function FilterSelect({
     value,
     onValueChange,
     options,
     placeholder = "Select...",
     className,
 }: FilterSelectProps) {
+    // Memoize the options to prevent unnecessary re-renders
+    const memoizedOptions = React.useMemo(() => options, [options])
+
+    // Memoize the onValueChange to prevent re-renders
+    const handleValueChange = React.useCallback(
+        (newValue: string) => {
+            onValueChange(newValue)
+        },
+        [onValueChange],
+    )
+
     return (
-        <Select value={value} onValueChange={onValueChange}>
+        <Select value={value} onValueChange={handleValueChange}>
             <SelectTrigger className={cn("w-[180px]", className)}>
                 <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent>
-                {options.map((option) => (
+                {memoizedOptions.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                         {option.label}
                     </SelectItem>
@@ -173,4 +185,4 @@ export function FilterSelect({
             </SelectContent>
         </Select>
     )
-}
+})

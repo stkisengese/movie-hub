@@ -1,32 +1,58 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 
 export function useLocalStorage<T>(
   key: string,
   initialValue: T,
 ): [T, (value: T | ((val: T) => T)) => void, () => void] {
+  // Use a ref to store the initial value to prevent it from changing on every render
+  const initialValueRef = useRef(initialValue)
+
   // State to store our value
-  const [storedValue, setStoredValue] = useState<T>(initialValue)
+  const [storedValue, setStoredValue] = useState<T>(() => {
+    // Only run this on the client side
+    if (typeof window === "undefined") {
+      return initialValue
+    }
+
+    try {
+      const item = window.localStorage.getItem(key)
+      if (item) {
+        return JSON.parse(item)
+      }
+      return initialValue
+    } catch (error) {
+      console.warn(`Error reading localStorage key "${key}":`, error)
+      return initialValue
+    }
+  })
+
   const [isInitialized, setIsInitialized] = useState(false)
 
-  // Initialize from localStorage on mount
+  // Initialize from localStorage on mount (client-side only)
   useEffect(() => {
+    if (typeof window === "undefined") {
+      setIsInitialized(true)
+      return
+    }
+
     try {
-      if (typeof window !== "undefined") {
-        const item = window.localStorage.getItem(key)
-        if (item) {
-          const parsedValue = JSON.parse(item)
-          setStoredValue(parsedValue)
-        }
+      const item = window.localStorage.getItem(key)
+      if (item) {
+        const parsedValue = JSON.parse(item)
+        setStoredValue(parsedValue)
+      } else {
+        // If no item exists, set the initial value
+        setStoredValue(initialValueRef.current)
       }
     } catch (error) {
       console.warn(`Error reading localStorage key "${key}":`, error)
-      setStoredValue(initialValue)
+      setStoredValue(initialValueRef.current)
     } finally {
       setIsInitialized(true)
     }
-  }, [key, initialValue])
+  }, [key]) // Only depend on key, not initialValue
 
   // Return a wrapped version of useState's setter function that persists the new value to localStorage
   const setValue = useCallback(
@@ -52,14 +78,14 @@ export function useLocalStorage<T>(
   // Function to remove the item from localStorage
   const removeValue = useCallback(() => {
     try {
-      setStoredValue(initialValue)
+      setStoredValue(initialValueRef.current)
       if (typeof window !== "undefined") {
         window.localStorage.removeItem(key)
       }
     } catch (error) {
       console.warn(`Error removing localStorage key "${key}":`, error)
     }
-  }, [key, initialValue])
+  }, [key])
 
-  return [isInitialized ? storedValue : initialValue, setValue, removeValue]
+  return [isInitialized ? storedValue : initialValueRef.current, setValue, removeValue]
 }

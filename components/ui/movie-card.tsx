@@ -1,6 +1,7 @@
 "use client"
 
 import type * as React from "react"
+import { useCallback } from "react"
 import Image from "next/image"
 import { Star, Bookmark, Play, Calendar } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -39,7 +40,7 @@ export function MovieCard({
         lg: "w-48",
     }
 
-    const handleCardClick = () => {
+    const handleCardClick = useCallback(() => {
         if (onCardClick) {
             onCardClick(item)
         } else {
@@ -47,11 +48,17 @@ export function MovieCard({
             const path = item.media_type === "movie" ? `/movie/${item.id}` : `/tv/${item.id}`
             window.location.href = path
         }
-    }
+    }, [item, onCardClick])
 
     const handleWatchlistClick = (e: React.MouseEvent) => {
         e.stopPropagation()
-        onWatchlistToggle?.(item)
+        e.preventDefault()
+
+        try {
+            onWatchlistToggle?.(item)
+        } catch (error) {
+            console.error("Error toggling watchlist:", error)
+        }
     }
 
     return (

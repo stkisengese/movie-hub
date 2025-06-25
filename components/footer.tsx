@@ -30,17 +30,23 @@ export function Footer() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/movies" className="text-muted-foreground hover:text-foreground transition-colors">
+                                <Link
+                                    href="/search?type=movie"
+                                    className="text-muted-foreground hover:text-foreground transition-colors"
+                                >
                                     Movies
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/tv" className="text-muted-foreground hover:text-foreground transition-colors">
+                                <Link href="/search?type=tv" className="text-muted-foreground hover:text-foreground transition-colors">
                                     TV Shows
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/trending" className="text-muted-foreground hover:text-foreground transition-colors">
+                                <Link
+                                    href="/search?sort=popularity"
+                                    className="text-muted-foreground hover:text-foreground transition-colors"
+                                >
                                     Trending
                                 </Link>
                             </li>

@@ -52,13 +52,25 @@ export function useWatchlist() {
     const toggleWatchlist = useCallback(
         (mediaItem: MediaItem) => {
             const type = mediaItem.media_type as "movie" | "tv"
-            if (isInWatchlist(mediaItem.id, type)) {
-                removeFromWatchlist(mediaItem.id, type)
+            const inWatchlist = watchlist.some((item) => item.id === mediaItem.id && item.type === type)
+
+            if (inWatchlist) {
+                setWatchlist((prev) => prev.filter((item) => !(item.id === mediaItem.id && item.type === type)))
             } else {
-                addToWatchlist(mediaItem)
+                const watchlistItem: WatchlistItem = {
+                    id: mediaItem.id,
+                    type: type,
+                    title: mediaItem.title || mediaItem.name || "Unknown Title",
+                    poster_path: mediaItem.poster_path,
+                    vote_average: mediaItem.vote_average,
+                    release_date: mediaItem.release_date || mediaItem.first_air_date || "",
+                    watched: false,
+                    addedAt: new Date().toISOString(),
+                }
+                setWatchlist((prev) => [watchlistItem, ...prev])
             }
         },
-        [isInWatchlist, addToWatchlist, removeFromWatchlist],
+        [watchlist, setWatchlist],
     )
 
     // Mark item as watched/unwatched
