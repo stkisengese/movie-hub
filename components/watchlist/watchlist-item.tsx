@@ -127,7 +127,80 @@ export function WatchlistItem({
                             )}
                         </div>
 
-                        
+                        {/* Rating and Notes */}
+                        {isEditing ? (
+                            <div className="mt-3 space-y-3">
+                                <div>
+                                    <label className="text-sm font-medium">Your Rating</label>
+                                    <div className="flex items-center gap-2 mt-1">
+                                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rating) => (
+                                            <button
+                                                key={rating}
+                                                onClick={() => setEditRating(rating)}
+                                                className={cn(
+                                                    "w-6 h-6 rounded text-xs font-medium transition-colors",
+                                                    editRating >= rating
+                                                        ? "bg-yellow-400 text-yellow-900"
+                                                        : "bg-gray-200 text-gray-600 hover:bg-gray-300",
+                                                )}
+                                            >
+                                                {rating}
+                                            </button>
+                                        ))}
+                                        <button
+                                            onClick={() => setEditRating(0)}
+                                            className="text-xs text-muted-foreground hover:text-foreground ml-2"
+                                        >
+                                            Clear
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="text-sm font-medium">Notes</label>
+                                    <textarea
+                                        value={editNotes}
+                                        onChange={(e) => setEditNotes(e.target.value)}
+                                        placeholder="Add your thoughts..."
+                                        className="w-full mt-1 p-2 text-sm border rounded resize-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                        rows={2}
+                                    />
+                                </div>
+
+                                <div className="flex gap-2">
+                                    <Button size="sm" onClick={handleSave}>
+                                        <Save className="h-3 w-3 mr-1" />
+                                        Save
+                                    </Button>
+                                    <Button size="sm" variant="outline" onClick={handleCancel}>
+                                        <X className="h-3 w-3 mr-1" />
+                                        Cancel
+                                    </Button>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                {(item.rating || item.notes) && (
+                                    <div className="mt-3 space-y-2">
+                                        {item.rating && (
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm font-medium">Your Rating:</span>
+                                                <div className="flex items-center gap-1">
+                                                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                                    <span className="text-sm font-medium">{item.rating}/10</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {item.notes && (
+                                            <div>
+                                                <span className="text-sm font-medium">Notes:</span>
+                                                <p className="text-sm text-muted-foreground mt-1">{item.notes}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </>
+                        )}
 
                         <div className="text-xs text-muted-foreground mt-2">Added {formatDate(item.addedAt)}</div>
                     </div>
