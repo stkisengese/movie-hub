@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Search, X, SlidersHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -20,18 +20,19 @@ export default function SearchPage() {
     const watchlist = useWatchlist()
     const searchHistory = useSearchHistory()
 
-    // Get initial query from URL params
-    const initialQuery = searchParams.get("q") || ""
-
     // Search hook
     const movieSearch = useMovieSearch(300) // 300ms debounce
 
     // Local state
     const [showFilters, setShowFilters] = useState(false)
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
+    const [isInitialized, setIsInitialized] = useState(false)
 
-    // Initialize search from URL params
+    // Initialize search from URL params only once
     useEffect(() => {
+        if (isInitialized) return
+
+        const initialQuery = searchParams.get("q") || ""
         const type = searchParams.get("type")
         const sort = searchParams.get("sort")
 
@@ -51,10 +52,14 @@ export default function SearchPage() {
         if (Object.keys(newFilters).length > 0) {
             movieSearch.setFilters(newFilters)
         }
-    }, [initialQuery, searchParams, movieSearch.setQuery, movieSearch.setFilters])
 
-    // Update URL when search changes
+        setIsInitialized(true)
+    }, [searchParams, isInitialized, movieSearch.setQuery, movieSearch.setFilters])
+
+    // Update URL when search changes (but not on initial load)
     useEffect(() => {
+        if (!isInitialized) return
+
         const params = new URLSearchParams()
         if (movieSearch.query) {
             params.set("q", movieSearch.query)
@@ -71,29 +76,38 @@ export default function SearchPage() {
 
         const newUrl = params.toString() ? `/search?${params.toString()}` : "/search"
         router.replace(newUrl, { scroll: false })
-    }, [movieSearch.query, movieSearch.filters, router])
+    }, [movieSearch.query, movieSearch.filters, router, isInitialized])
 
     // Add to search history when search is performed
     useEffect(() => {
         if (movieSearch.hasSearched && movieSearch.query && movieSearch.results.length >= 0) {
             searchHistory.addToHistory(movieSearch.query, movieSearch.totalResults)
         }
-    }, [movieSearch.hasSearched, movieSearch.query, movieSearch.totalResults, searchHistory.addToHistory])
+    }, [movieSearch.hasSearched, movieSearch.query, movieSearch.totalResults, searchHistory])
 
-    const handleItemClick = (item: any) => {
-        const path = item.media_type === "movie" ? `/movie/${item.id}` : `/tv/${item.id}`
-        router.push(path)
-    }
+    const handleItemClick = useCallback(
+        (item: any) => {
+            const path = item.media_type === "movie" ? `/movie/${item.id}` : `/tv/${item.id}`
+            router.push(path)
+        },
+        [router],
+    )
 
-    const handlePageChange = (page: number) => {
-        movieSearch.searchMovies({ page })
-    }
+    const handlePageChange = useCallback(
+        (page: number) => {
+            movieSearch.searchMovies({ page })
+        },
+        [movieSearch],
+    )
 
-    const handleFilterChange = (newFilters: any) => {
-        movieSearch.setFilters(newFilters)
-    }
+    const handleFilterChange = useCallback(
+        (newFilters: any) => {
+            movieSearch.setFilters(newFilters)
+        },
+        [movieSearch],
+    )
 
-    const handleClearFilters = () => {
+    const handleClearFilters = useCallback(() => {
         movieSearch.setFilters({
             type: "all",
             year: "all",
@@ -101,7 +115,14 @@ export default function SearchPage() {
             sortBy: "popularity",
             sortOrder: "desc",
         })
-    }
+    }, [movieSearch])
+
+    const handleSearchHistoryClick = useCallback(
+        (query: string) => {
+            movieSearch.setQuery(query)
+        },
+        [movieSearch],
+    )
 
     const hasActiveFilters =
         movieSearch.filters.type !== "all" || movieSearch.filters.year !== "all" || movieSearch.filters.genre !== "all"
@@ -170,7 +191,7 @@ export default function SearchPage() {
             {!movieSearch.query && !movieSearch.hasSearched && (
                 <SearchHistory
                     history={searchHistory.getRecentSearches(8)}
-                    onSearchClick={(query) => movieSearch.setQuery(query)}
+                    onSearchClick={handleSearchHistoryClick}
                     onClearHistory={searchHistory.clearHistory}
                     className="mb-8"
                 />
