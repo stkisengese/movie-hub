@@ -21,49 +21,41 @@ A modern movie and TV show discovery application built with Next.js, TypeScript,
 ### Installation
 
 1. Clone the repository:
-\`\`\`bash
-git clone <repository-url>
+```bash
+git clone https://github.com/stkisengese/movie-hub.git movieflix
 cd movieflix
-\`\`\`
+```
 
 2. Install dependencies:
-\`\`\`bash
+```bash
 npm install
-# or
-yarn install
-# or
-pnpm install
-\`\`\`
+```
 
 3. Set up environment variables:
-\`\`\`bash
+```bash
 cp .env.local.example .env.local
-\`\`\`
+```
 
 4. Get your API keys:
    - [TMDB API Key](https://www.themoviedb.org/settings/api)
    - [OMDB API Key](http://www.omdbapi.com/apikey.aspx)
 
 5. Add your API keys to `.env.local`:
-\`\`\`env
+```env
 TMDB_API_KEY=your_tmdb_api_key_here
 OMDB_API_KEY=your_omdb_api_key_here
-\`\`\`
+```
 
 6. Run the development server:
-\`\`\`bash
+```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-\`\`\`
+```
 
 7. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Project Structure
 
-\`\`\`
+```
 movieflix/
 ├── app/                    # Next.js App Router
 │   ├── globals.css        # Global styles
@@ -76,7 +68,7 @@ movieflix/
 ├── types/                # TypeScript type definitions
 ├── public/               # Static assets
 └── ...config files
-\`\`\`
+```
 
 ## Scripts
 
@@ -106,4 +98,4 @@ movieflix/
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the [MIT License](LICENSE).
