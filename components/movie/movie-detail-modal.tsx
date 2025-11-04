@@ -124,7 +124,7 @@ export function MovieDetailModal({ item, isOpen, onClose, onPlayClick }: MovieDe
                   {details && "runtime" in details && details.runtime ? (
                     <div className="flex items-center gap-1">
                       <Clock className="h-4 w-4" />
-                      {formatRuntime((details as MovieDetails)?.runtime)}
+                      {formatRuntime(details.runtime!)}
                     </div>
                   ) : null}
 
@@ -278,25 +278,21 @@ export function MovieDetailModal({ item, isOpen, onClose, onPlayClick }: MovieDe
                         )}
 
                         {details &&
-                          "budget" in details &&
-                          (details as MovieDetails)?.budget &&
-                          (details as MovieDetails)?.budget > 0 && (
+                          "budget" in details && details.budget! > 0 && (
                             <div>
                               <h4 className="font-medium mb-2">Budget</h4>
                               <p className="text-sm text-muted-foreground">
-                                ${formatNumber((details as MovieDetails)?.budget)}
+                                ${formatNumber(details.budget!)}
                               </p>
                             </div>
                           )}
 
                         {details &&
-                          "revenue" in details &&
-                          (details as MovieDetails)?.revenue &&
-                          (details as MovieDetails)?.revenue > 0 && (
+                          "revenue" in details && details.revenue! > 0 && (
                             <div>
                               <h4 className="font-medium mb-2">Box Office</h4>
                               <p className="text-sm text-muted-foreground">
-                                ${formatNumber((details as MovieDetails)?.revenue)}
+                                ${formatNumber(details.revenue!)}
                               </p>
                             </div>
                           )}
