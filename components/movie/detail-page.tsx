@@ -129,7 +129,7 @@ export function DetailPage({ id, type }: DetailPageProps) {
         <div className="min-h-screen">
             {/* Hero Section */}
             <div className="relative h-[60vh] md:h-[70vh]">
-                <Image src={backdropUrl || "/placeholder.svg"} alt={title} fill className="object-cover" priority />
+                <Image src={backdropUrl || "/placeholder.svg"} alt={title} fill className="object-cover" priority sizes="100vw" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
 
                 {/* Back Button */}
@@ -159,7 +159,8 @@ export function DetailPage({ id, type }: DetailPageProps) {
                             {/* Poster */}
                             <div className="flex-shrink-0">
                                 <div className="w-40 md:w-48 aspect-poster relative rounded-lg overflow-hidden shadow-2xl">
-                                    <Image src={posterUrl || "/placeholder.svg"} alt={title} fill className="object-cover" />
+                                    <Image src={posterUrl || "/placeholder.svg"} alt={title} fill className="object-cover"
+                                        sizes="(max-width: 768px) 40vw, (max-width: 1200px) 25vw, 20vw" />
                                 </div>
                             </div>
 
