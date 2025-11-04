@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { getMovieDetails, getTVShowDetails, getOMDBDetails } from "@/lib/api"
+import { getMovieDetails, getTVShowDetails } from "@/lib/api"
 import type { MovieDetails, TVShowDetails, OMDBMovie, APIResponse } from "@/types"
 
 interface UseMovieDetailsReturn {
@@ -35,9 +35,10 @@ export function useMovieDetails(id: number, type: "movie" | "tv"): UseMovieDetai
                 // Fetch additional details from OMDB if IMDB ID is available
                 if (response.data.external_ids?.imdb_id) {
                     try {
-                        const omdbResponse: APIResponse<OMDBMovie> = await getOMDBDetails(response.data.external_ids.imdb_id)
-                        if (omdbResponse.success && omdbResponse.data) {
-                            setOmdbDetails(omdbResponse.data)
+                        const omdbResponse = await fetch(`/api/omdb/${response.data.external_ids.imdb_id}`)
+                        if (omdbResponse.ok) {
+                            const omdbData: OMDBMovie = await omdbResponse.json()
+                            setOmdbDetails(omdbData)
                         }
                     } catch (omdbError) {
                         // OMDB error is not critical, just log it
