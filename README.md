@@ -1,6 +1,6 @@
 # MovieFlix - Movie Discovery App
 
-A modern movie and TV show discovery application built with Next.js, TypeScript, and Tailwind CSS.
+MovieFlix is a modern, responsive web application for discovering movies and TV shows, built with Next.js, TypeScript, and Tailwind CSS. It provides a rich user experience with features like trending content, advanced search, detailed information pages, and personalized watchlists.
 
 ## Features
 
